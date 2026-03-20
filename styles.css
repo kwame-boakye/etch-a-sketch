@@ -48,7 +48,3 @@ body {
 .grid-square {
   border: 1px solid #e6e6e6;
 }
-
-.grid-square.hovered {
-  background-color: #222;
-}

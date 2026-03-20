@@ -5,6 +5,18 @@ const CANVAS_SIZE_PX = 960;
 const gridContainer = document.getElementById("grid-container");
 const resizeButton = document.getElementById("resize-button");
 
+function getRandomChannelValue() {
+  return Math.floor(Math.random() * 256);
+}
+
+function getDarkenedColor(baseColor, darkenStep) {
+  const darknessFactor = Math.max(0, 1 - darkenStep * 0.1);
+  const red = Math.round(baseColor.r * darknessFactor);
+  const green = Math.round(baseColor.g * darknessFactor);
+  const blue = Math.round(baseColor.b * darknessFactor);
+  return `rgb(${red}, ${green}, ${blue})`;
+}
+
 function createGrid(size) {
   gridContainer.replaceChildren();
 
@@ -18,7 +30,21 @@ function createGrid(size) {
     square.style.height = `${squareSize}px`;
 
     square.addEventListener("mouseenter", () => {
-      square.classList.add("hovered");
+      const currentStep = Number(square.dataset.darkenStep ?? "0");
+      const nextStep = Math.min(10, currentStep + 1);
+      square.dataset.darkenStep = String(nextStep);
+
+      if (!square.dataset.baseColor) {
+        const randomColor = {
+          r: getRandomChannelValue(),
+          g: getRandomChannelValue(),
+          b: getRandomChannelValue(),
+        };
+        square.dataset.baseColor = JSON.stringify(randomColor);
+      }
+
+      const baseColor = JSON.parse(square.dataset.baseColor);
+      square.style.backgroundColor = getDarkenedColor(baseColor, nextStep);
     });
 
     gridContainer.append(square);
